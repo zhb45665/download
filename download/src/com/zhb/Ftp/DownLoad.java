@@ -19,6 +19,7 @@ import sun.net.ftp.FtpClient;
 
 import com.zhb.tools.ExecuteSql;
 import com.zhb.tools.FTPUtil;
+import org.apache.log4j.Logger;
 
 public class DownLoad extends JFrame {
 
@@ -32,6 +33,8 @@ public class DownLoad extends JFrame {
 	private JTextField tf_DbIP;
 	private JTextField tf_DbName;
 
+	private static Logger logger = Logger.getLogger(DownLoad.class);
+
 	public static void main(String args[]) {
 		EventQueue.invokeLater(new Runnable() {
 
@@ -40,7 +43,7 @@ public class DownLoad extends JFrame {
 					DownLoad frame = new DownLoad();
 					frame.setVisible(true);
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.error(e.getMessage());
 				}
 			}
 
@@ -126,7 +129,16 @@ public class DownLoad extends JFrame {
 						|| tf_localpath.equals("")) {
 					ta_Info.append("LocalPath is null");
 				} else {
+					if (ftp != null){
 					FTPUtil.changeDirectory(ftp, regex);
+					}else{
+						String ip = "10.1.253.152";
+						int port = 21;
+						String username = "tone";
+						String password = "sxdxtone";
+						ftp = FTPUtil.connectFTP(ip, port, username, password);
+						FTPUtil.changeDirectory(ftp, regex);
+					}
 					ExecuteSql es = new ExecuteSql();
 					tableName = tf_tableName.getText();
 					DbIP = tf_DbIP.getText();
@@ -160,23 +172,48 @@ public class DownLoad extends JFrame {
 							area=ph[1];
 //							电话号码
 							phone=ph[0];
-							String localdir = (new StringBuilder(String
-									.valueOf(tf_localpath.getText())))
-									.append(regex).append(quesstion).append(regex).append(area).append(regex)
-									.toString();
+//							String localdir = (new StringBuilder(String
+//									.valueOf(tf_localpath.getText())))
+////									.append(regex).append(quesstion).append(regex).append(area).append(regex)
+//									.append(regex).append(quesstion).append(regex)
+//									.toString();
+							String localdir =  (new StringBuilder(String.valueOf(tf_localpath.getText()))).append(regex).append(dirpah).toString();
+							if (ftp != null){
 							FTPUtil.changeDirectory(ftp, dirpah);
 							FTPUtil.download(
 									(new StringBuilder(String.valueOf(localdir)))
-											.append(phone).toString(), local,
+//											.append(phone+"-"+area+".wav").toString(), local,
+									.append(regex).append(local).toString(), local,
+//									.append(phone+"-"+local).toString(),local,
 									ftp);
+							 logger.info(ph[0]+"------"+local);  
 							FTPUtil.changeDirectory(ftp, regex);
+							}else{
+								String ip = "10.1.253.152";
+								int port = 21;
+								String username = "tone";
+								String password = "sxdxtone";
+								ftp = FTPUtil.connectFTP(ip, port, username, password);
+								FTPUtil.changeDirectory(ftp, dirpah);
+								FTPUtil.download(
+										(new StringBuilder(String.valueOf(localdir)))
+//												.append(phone+"-"+area+".wav").toString(), local,
+										.append(regex).append(local).toString(), local,
+//										.append(phone+"-"+local).toString(),local,
+										ftp);
+								 logger.info(ph[0]+"------"+local);  
+								FTPUtil.changeDirectory(ftp, regex);
+							}
 						}
+							
 
 						System.out.println((new StringBuilder("total:"))
 								.append(counts).toString());
 					} catch (Exception e1) {
-						e1.printStackTrace();
+						logger.error(e1.getMessage());
+						
 					}
+					
 				}
 			}
 		});

@@ -7,6 +7,11 @@ package com.zhb.tools;
 
 import java.io.*;
 import java.net.InetSocketAddress;
+
+import org.apache.log4j.Logger;
+
+import com.zhb.Ftp.DownLoad;
+
 import sun.net.ftp.FtpClient;
 import sun.net.ftp.FtpProtocolException;
 
@@ -14,7 +19,7 @@ public class FTPUtil {
 
 	public FTPUtil() {
 	}
-
+	private static Logger logger = Logger.getLogger(FTPUtil.class);
 	public static FtpClient connectFTP(String url, int port, String username,
 			String password) {
 		FtpClient ftp = null;
@@ -38,9 +43,9 @@ public class FTPUtil {
 			ftp.changeDirectory(path);
 			System.out.println(ftp.getWorkingDirectory());
 		} catch (FtpProtocolException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 	}
 
@@ -73,10 +78,10 @@ public class FTPUtil {
 			if (fis != null)
 				fis.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		} catch (FtpProtocolException e) {
-			// TODO 自动生成的 catch 块
-			e.printStackTrace();
+			// TODO 鑷姩鐢熸垚鐨� catch 鍧�
+			logger.error(e.getMessage());
 		}
 
 	}
@@ -102,10 +107,10 @@ public class FTPUtil {
 			if (is != null)
 				is.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		} catch (FtpProtocolException e) {
-			// TODO 自动生成的 catch 块
-			e.printStackTrace();
+			// TODO 鑷姩鐢熸垚鐨� catch 鍧�
+			logger.error(e.getMessage());
 		}
 
 	}
